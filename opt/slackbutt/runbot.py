@@ -7,15 +7,20 @@
 #
 #  Creation Date : 18-03-2016
 #
-#  Last Modified : Fri 18 Mar 2016 11:35:24 AM CDT
+#  Last Modified : Fri 25 Mar 2016 05:54:59 PM CDT
 #
 #  Created By : Brian Auron
 #
 # ========================================
 
 import slackbot.bot
+import logging
+
+CONFIG = 'config.yml'
 
 def main():
+    logging.basicConfig()
+    LOGGER = logging.getLogger('slackbot')
     bot = slackbot.bot.Bot()
     bot.run()
 
