@@ -7,7 +7,7 @@
 #
 #  Creation Date : 18-03-2016
 #
-#  Last Modified : Fri 25 Mar 2016 05:51:28 PM CDT
+#  Last Modified : Mon 28 Mar 2016 04:31:04 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -95,15 +95,16 @@ def spin_wheel(message):
 
 PINGSTRING = r'''^([^\w\s]*|_*)
                   ([a-zA-Z]+)
-                  ING
+                  ING(S?)
                   ([^\w\s]*|_*)
                   (\sME(\s.*)?)?$'''
 PING = re.compile(PINGSTRING, re.IGNORECASE | re.VERBOSE)
 @slackbot.bot.listen_to(PING)
 def ping(message, *groups):
     letter = groups[1]
-    pre, suf = groups[0], groups[2]
+    pre, suf = groups[0], groups[3]
     msg = 'ong' if letter[-1].islower() else 'ONG'
+    msg += 's' if groups[2] and groups[2].islower() else 'S' if groups[2] else ''
     msg = pre+letter+msg+suf
     message.reply(msg)
 
@@ -131,7 +132,7 @@ GREATDAYSTRING = r'''(it's\sgonna\sbe\sa\s)*
                     great\sday'''
 GREATDAY = re.compile(GREATDAYSTRING, re.IGNORECASE|re.VERBOSE)
 @slackbot.bot.listen_to(GREATDAY)
-def fixit(message):
+def great_day(message, *groups):
     message.reply('https://www.youtube.com/watch?v=WRu_-9MBpd4')
 
 SPENDSTRING = r'''can\s
@@ -195,8 +196,9 @@ def enhance(message):
     message.send('/me types furiously. "Enhance."')
 
 #@slackbot.bot.listen_to('.*')
-#def explore(message):
-#    udi = message._get_user_id()
-#    name = message._client.users[udi]['name']
-#    print 'Found message %s from %s' % (message.body['text'], name)
-#    #message.send('@%s: found your name!' % name)
+#def explore(message, *groups):
+    #print 'Groups: [[%s]]' % ', '.join(groups)
+    #udi = message._get_user_id()
+    #name = message._client.users[udi]['name']
+    #print 'Found message %s from %s' % (message.body['text'], name)
+    #message.send('@%s: found your name!' % name)

@@ -7,7 +7,7 @@
 #
 #  Creation Date : 27-03-2016
 #
-#  Last Modified : Sun 27 Mar 2016 09:14:18 AM CDT
+#  Last Modified : Mon 28 Mar 2016 04:35:15 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -42,11 +42,13 @@ class Issue(object):
 
 
 LISTISSUESTRING = r'''github\slist\sissues?
-                      ($|\sopen|\sclosed)'''
+                      ($|\sopen|\sclosed)?
+                      ($|\sexpanded)'''
 LISTISSUES = re.compile(LISTISSUESTRING, re.IGNORECASE|re.VERBOSE)
 @slackbot.bot.respond_to(LISTISSUES)
 def list_issues(message, *groups):
     param = groups[0]
+    expanded = groups[1]
     params = {}
     if param:
         params['state'] = param
@@ -54,7 +56,12 @@ def list_issues(message, *groups):
     if len(resp) == 0:
         message.reply('0 issues found.')
         return
-    [message.reply(i['html_url']) for i in resp]
+    if expanded:
+        for i in resp:
+            (message.reply('Issue: %s\nTitle: %s\nDescription: %s' %
+                (i['html_url'], i['title'], i['body'])))
+    else:
+        [message.reply(i['html_url']) for i in resp]
     #print 'Got a message %s with groups "%s"' % (message.body, groups)
 
 CREATEISSUESTRING = r'''github\screate\sissue\s
