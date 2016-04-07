@@ -7,7 +7,7 @@
 #
 #  Creation Date : 27-03-2016
 #
-#  Last Modified : Mon 28 Mar 2016 04:35:15 PM CDT
+#  Last Modified : Tue 29 Mar 2016 05:28:59 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -16,10 +16,13 @@
 import requests
 import yaml
 import json
+import os
 import re
 import slackbot.bot
 
-with open('config.yml', 'r') as yml:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG = os.path.join(BASE_DIR, '../config.yml')
+with open(CONFIG, 'r') as yml:
     cfg = yaml.load(yml.read())
 
 URL = cfg['github']['url']

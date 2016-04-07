@@ -7,7 +7,7 @@
 #
 #  Creation Date : 18-03-2016
 #
-#  Last Modified : Fri 25 Mar 2016 12:22:56 PM CDT
+#  Last Modified : Tue 29 Mar 2016 05:29:19 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -17,10 +17,12 @@ import peewee
 import playhouse.postgres_ext as pe
 import yaml
 import re
+import os
 import functools
 
-YAML = 'config.yml'
-with open(YAML, 'r') as yml:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG = os.path.join(BASE_DIR, '../config.yml')
+with open(CONFIG, 'r') as yml:
     cfg = yaml.load(yml.read())
 dbuser = cfg['dbuser']
 dbpass = cfg['dbpass']
