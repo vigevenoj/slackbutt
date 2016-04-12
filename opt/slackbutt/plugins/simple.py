@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/python
 # =======================================
 #
@@ -7,7 +8,7 @@
 #
 #  Creation Date : 18-03-2016
 #
-#  Last Modified : Mon 28 Mar 2016 04:31:04 PM CDT
+#  Last Modified : Tue 12 Apr 2016 05:36:45 PM CDT
 #
 #  Created By : Brian Auron
 #
@@ -17,6 +18,7 @@ import slackbot.bot
 import re
 import random
 import traceback
+import six
 
 def user(msg):
     return msg._client.users[message._get_user_id()]['name']
@@ -111,7 +113,7 @@ def ping(message, *groups):
 WHELPSTRING = '''whelps'''
 WHELPS = re.compile(WHELPSTRING, re.IGNORECASE)
 @slackbot.bot.listen_to(WHELPS)
-def martin(message):
+def whelps(message):
     for i in ['WHELPS','LEFT SIDE','EVEN SIDE',
               'MANY WHELPS','NOW','HANDLE IT!']:
         message.reply(i)
@@ -125,7 +127,7 @@ def fixit(message):
 FINESTRING = '''this\sis\sfine'''
 FINE = re.compile(FINESTRING, re.IGNORECASE)
 @slackbot.bot.listen_to(FINE)
-def fixit(message):
+def this_is_fine(message):
     message.reply('http://gunshowcomic.com/648')
 
 GREATDAYSTRING = r'''(it's\sgonna\sbe\sa\s)*
@@ -142,14 +144,14 @@ SPENDSTRING = r'''can\s
                      money'''
 SPEND = re.compile(SPENDSTRING, re.IGNORECASE|re.VERBOSE)
 @slackbot.bot.listen_to(SPEND)
-def fixit(message, *groups):
+def can_spend(message, *groups):
     message.reply('http://brianauron.info/CanBobiSpendThisMoney')
 
 HADDAWAYSTRING = r'''(|,)\s
                      what\sis\slove\?*$'''
 HADDAWAY = re.compile(HADDAWAYSTRING, re.IGNORECASE|re.VERBOSE)
 @slackbot.bot.listen_to(HADDAWAY)
-def fixit(message):
+def what_is_love(message):
     message.reply('Baby don\'t hurt me!  https://www.youtube.com/watch?v=JRVfysTXhNA')
 
 MANATEESTRING = '''[A-Z]{3}'''
@@ -189,16 +191,32 @@ def come_to_cleveland(message, *groups):
     who = groups[0]
     message.send('@'+who+': https://www.youtube.com/watch?v=ysmLA5TqbIY')
 
-ENHANCESTRING = r'''tell\s(.+)\sto\scome\sto\sCleveland'''
+ENHANCESTRING = r'''enhance'''
 ENHANCE = re.compile(ENHANCESTRING)
 @slackbot.bot.listen_to(ENHANCE)
 def enhance(message):
     message.send('/me types furiously. "Enhance."')
 
-#@slackbot.bot.listen_to('.*')
-#def explore(message, *groups):
-    #print 'Groups: [[%s]]' % ', '.join(groups)
-    #udi = message._get_user_id()
-    #name = message._client.users[udi]['name']
-    #print 'Found message %s from %s' % (message.body['text'], name)
-    #message.send('@%s: found your name!' % name)
+@slackbot.bot.respond_to(re.compile('h[ae]lp', re.I))
+def explore(message, *groups):
+    udi = message._get_user_id()
+    name = message._client.users[udi]['name']
+    (message
+     ._client
+     .send_message('@%s' % name,
+                   'Respond to:'))
+    (message
+     ._client
+     .send_message('@%s' % name,
+                   message.docs_reply()))
+    (message
+     ._client
+     .send_message('@%s' % name,
+                   'Listen to:'))
+    reply = [u'    • `{0}` {1}'.format(v.__name__, v.__doc__ or '')
+             for _, v in six.iteritems(message._plugins.commands['listen_to'])]
+    (message
+     ._client
+     .send_message('@%s' % name,
+                   u'\n'.join(reply)))
+
