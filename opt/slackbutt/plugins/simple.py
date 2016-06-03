@@ -96,7 +96,7 @@ def spin_wheel(message):
     message.reply(str(random.choice(values)))
 
 PINGSTRING = r'''^([^\w\s]*|_*)
-                  ([a-zA-Z]+)
+                  ([a-zA-Z-_]+)
                   ING(S?)
                   ([^\w\s]*|_*)
                   (\sME(\s.*)?)?$'''
