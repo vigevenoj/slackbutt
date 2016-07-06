@@ -17,7 +17,7 @@ def giphy(message, query):
         return
     data = response.json()['data']
     if not data:
-        message.reply('durrr no results found durrr')
+        message.reply('http://media2.giphy.com/media/rGcopDCOTAW8o/200.gif')
         return
     index = int(random.expovariate(math.sqrt(2)/2))
     if index > len(data):
