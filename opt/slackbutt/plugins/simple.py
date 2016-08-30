@@ -219,4 +219,3 @@ def explore(message, *groups):
      ._client
      .send_message('@%s' % name,
                    u'\n'.join(reply)))
-
