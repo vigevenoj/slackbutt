@@ -20,6 +20,6 @@ def giphy(message, query):
         message.reply('http://media2.giphy.com/media/rGcopDCOTAW8o/200.gif')
         return
     index = int(random.expovariate(math.sqrt(2)/2))
-    if index > len(data):
+    if index >= len(data):
         index = 0
     message.reply(data[index]['images']['fixed_height']['url'])

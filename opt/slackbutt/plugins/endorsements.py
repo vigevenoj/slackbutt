@@ -19,6 +19,10 @@ dbpass = cfg['dbpass']
 db = cfg['db']
 psql_db = PostgresqlExtDatabase(db, user=dbuser, password=dbpass)
 
+class EndorsementError(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
 class EndorsementExistsError(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
@@ -70,9 +74,13 @@ def users(msg):
     return {i:j for i, j in msg._client.users.items()}
 
 def endorse(endorser_sid, endorsee_sid, skill):
-    _skill, _ = Skill.get_or_create(key=skill)
-    _endorser, _ = Person.get_or_create(slack_id=endorser_sid)
-    _endorsee, _ = Person.get_or_create(slack_id=endorsee_sid)
+    try:
+        _skill, _ = Skill.get_or_create(key=skill)
+        _endorser, _ = Person.get_or_create(slack_id=endorser_sid)
+        _endorsee, _ = Person.get_or_create(slack_id=endorsee_sid)
+    except peewee.InternalError:
+        raise EndorsementError('Something went wrong while trying endorse. \
+Sorry! Try again!')
     try:
         endorsement = Endorsement.create(endorser=_endorser,
                                          endorsee=_endorsee,
@@ -112,7 +120,7 @@ def do_endorse(msg, *groups):
     skill = groups[2]
     try:
         endorsement = endorse(endorser, endorsee, skill)
-    except EndorsementExistsError as e:
+    except (EndorsementError, EndorsementExistsError) as e:
         msg.reply(str(e))
         return
     endorser_nick = users(msg)[endorser]['name']
