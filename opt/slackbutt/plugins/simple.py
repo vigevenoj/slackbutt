@@ -108,6 +108,7 @@ def ping(message, *groups):
     msg = 'ong' if letter[-1].islower() else 'ONG'
     msg += 's' if groups[2] and groups[2].islower() else 'S' if groups[2] else ''
     msg = pre+letter+msg+suf
+    msg = 'Actually, it\'s "%s"' % msg
     message.reply(msg)
 
 WHELPSTRING = '''whelps'''
