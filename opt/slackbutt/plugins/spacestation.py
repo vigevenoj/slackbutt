@@ -10,9 +10,9 @@ LATITUDE = 45.522005
 
 
 class SpaceStation():
-    def __init__(self, longitude=-122.680372, latitude=45.522005):
-        self._longitude = longitude or LONGITUDE
-        self._latitude = latitude or LATITUDE
+    def __init__(self, longitude=LONGITUDE, latitude=LATITUDE):
+        self._longitude = longitude
+        self._latitude = latitude
 
     @property
     def longitude(self):
