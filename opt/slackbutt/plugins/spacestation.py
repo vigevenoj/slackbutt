@@ -47,7 +47,11 @@ class SpaceStation():
                 print "had problem with api not success"
 
         else:
-            print "status code was {0}".format(data.status_code)
+            print "status code for request '{0}' was {1}".format(
+                url,
+                data.status_code)
+            if (api_response['message'] == 'failure'):
+                reply = api_response['reason']
         return reply
 
 ISS_STRING = r'''iss\s?((-?[\d]+\.[\d]+)[,]?\s(-?[\d]+\.[\d]+))?'''
