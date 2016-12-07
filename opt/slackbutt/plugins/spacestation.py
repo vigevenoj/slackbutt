@@ -52,6 +52,7 @@ class SpaceStation():
             print "status code for request '{0}' was {1}".format(
                 url,
                 data.status_code)
+            api_response = data.json()
             if (api_response['message'] == 'failure'):
                 reply = api_response['reason']
         return reply
@@ -75,7 +76,7 @@ class SpaceStation():
         return reply
 
 
-ISS_STRING = r'''iss\s?((-?[\d]+\.[\d]+)[,]?\s(-?[\d]+\.[\d]+))?'''
+ISS_STRING = r'''iss[^\?$]((-?[\d]+\.[\d]+)[,]?\s(-?[\d]+\.[\d]+))?'''
 ISS = re.compile(ISS_STRING, re.IGNORECASE)
 
 
@@ -91,7 +92,7 @@ def do_iss(message, *groups):
     message.reply(msg)
 
 
-WHEREIS_STRING = r'''iss\?'''
+WHEREIS_STRING = r'''iss\?$'''
 WHEREIS = re.compile(WHEREIS_STRING, re.IGNORECASE)
 
 
