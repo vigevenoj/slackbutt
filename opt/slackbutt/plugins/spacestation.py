@@ -8,6 +8,8 @@ URL = 'http://api.open-notify.org/iss-pass.json?lat={0}&lon={1}'
 LONGITUDE = -122.680372
 LATITUDE = 45.522005
 
+WHEREIS_URL = 'http://api.open-notify.org/iss-now.json'
+
 
 class SpaceStation():
     def __init__(self, longitude=LONGITUDE, latitude=LATITUDE):
@@ -54,6 +56,29 @@ class SpaceStation():
                 reply = api_response['reason']
         return reply
 
+    def current_location(self):
+        reply = "nobody knows where it is"
+        data = requests.get(WHEREIS_URL)
+        if data.status_code == 200:
+            api_response = data.json()
+            if (api_response['message'] == 'success'):
+                longitude = api_response['iss_position']['longitude']
+                latitude = api_response['iss_position']['latitude']
+                if longitude >= 0:
+                    longitude = "{0} E".format(abs(float(longitude)))
+                else:
+                    longitude = "{0} W".format(abs(float(longitude)))
+                if latitude >= 0:
+                    latitude = "{0} N".format(abs(float(latitude)))
+                else:
+                    latitude = "{0} S".format(abs(float(latitude)))
+                reply = "The ISS is at {0}, {1}".format(longitude, latitude)
+        else:
+            print "status code for current location request was {1}".format(
+                data.status_code)
+        return reply
+
+
 ISS_STRING = r'''iss\s?((-?[\d]+\.[\d]+)[,]?\s(-?[\d]+\.[\d]+))?'''
 ISS = re.compile(ISS_STRING, re.IGNORECASE)
 
@@ -70,6 +95,18 @@ def do_iss(message, *groups):
     message.reply(msg)
 
 
+WHEREIS_STRING = r'''iss\?'''
+WHEREIS = re.compile(WHEREIS_STRING, re.IGNORECASE)
+
+
+@slackbot.bot.respond_to(WHEREIS)
+def do_where_is_iss(message, *groups):
+    iss = SpaceStation()
+    msg = iss.current_location()
+    message.reply(msg)
+
+
 if __name__ == '__main__':
     iss = SpaceStation(LONGITUDE, LATITUDE)
-    print iss.next_pass()
+#    print iss.next_pass()
+    print iss.current_location()
