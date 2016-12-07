@@ -92,7 +92,7 @@ def do_iss(message, *groups):
     message.reply(msg)
 
 
-WHEREIS_STRING = r'''iss\?'''
+WHEREIS_STRING = r'''iss\?$'''
 WHEREIS = re.compile(WHEREIS_STRING, re.IGNORECASE)
 
 
