@@ -8,6 +8,8 @@ URL = 'http://api.open-notify.org/iss-pass.json?lat={0}&lon={1}'
 LONGITUDE = -122.680372
 LATITUDE = 45.522005
 
+WHEREIS_URL = 'http://api.open-notify.org/iss-now.json'
+
 
 class SpaceStation():
     def __init__(self, longitude=LONGITUDE, latitude=LATITUDE):
@@ -47,8 +49,31 @@ class SpaceStation():
                 print "had problem with api not success"
 
         else:
-            print "status code was {0}".format(data.status_code)
+            print "status code for request '{0}' was {1}".format(
+                url,
+                data.status_code)
+            if (api_response['message'] == 'failure'):
+                reply = api_response['reason']
         return reply
+
+    def current_location(self):
+        reply = "nobody knows where it is"
+        data = requests.get(WHEREIS_URL)
+        if data.status_code == 200:
+            api_response = data.json()
+            if (api_response['message'] == 'success'):
+                longitude = api_response['iss_position']['longitude']
+                latitude = api_response['iss_position']['latitude']
+                longstr = {True: "%s E", False: "%s W"}[longitude >= 0] % abs(
+                    float(longitude))
+                latstr = {True: "%s N", False: "%s W"}[latitude >= 0] % abs(
+                    float(latitude))
+                reply = "The ISS is at %s, %s" % (longstr, latstr)
+        else:
+            print "status code for current location request was {1}".format(
+                data.status_code)
+        return reply
+
 
 ISS_STRING = r'''iss\s?((-?[\d]+\.[\d]+)[,]?\s(-?[\d]+\.[\d]+))?'''
 ISS = re.compile(ISS_STRING, re.IGNORECASE)
@@ -66,6 +91,18 @@ def do_iss(message, *groups):
     message.reply(msg)
 
 
+WHEREIS_STRING = r'''iss\?'''
+WHEREIS = re.compile(WHEREIS_STRING, re.IGNORECASE)
+
+
+@slackbot.bot.respond_to(WHEREIS)
+def do_where_is_iss(message, *groups):
+    iss = SpaceStation()
+    msg = iss.current_location()
+    message.reply(msg)
+
+
 if __name__ == '__main__':
     iss = SpaceStation(LONGITUDE, LATITUDE)
-    print iss.next_pass()
+#    print iss.next_pass()
+    print iss.current_location()
