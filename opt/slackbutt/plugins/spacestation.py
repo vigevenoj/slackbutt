@@ -64,15 +64,11 @@ class SpaceStation():
             if (api_response['message'] == 'success'):
                 longitude = api_response['iss_position']['longitude']
                 latitude = api_response['iss_position']['latitude']
-                if longitude >= 0:
-                    longitude = "{0} E".format(abs(float(longitude)))
-                else:
-                    longitude = "{0} W".format(abs(float(longitude)))
-                if latitude >= 0:
-                    latitude = "{0} N".format(abs(float(latitude)))
-                else:
-                    latitude = "{0} S".format(abs(float(latitude)))
-                reply = "The ISS is at {0}, {1}".format(longitude, latitude)
+                longstr = {True: "%s E", False: "%s W"}[longitude >= 0] % abs(
+                    float(longitude))
+                latstr = {True: "%s N", False: "%s W"}[latitude >= 0] % abs(
+                    float(latitude))
+                reply = "The ISS is at %s, %s" % (longstr, latstr)
         else:
             print "status code for current location request was {1}".format(
                 data.status_code)
