@@ -52,6 +52,7 @@ class SpaceStation():
             print "status code for request '{0}' was {1}".format(
                 url,
                 data.status_code)
+            api_response = data.json()
             if (api_response['message'] == 'failure'):
                 reply = api_response['reason']
         return reply
